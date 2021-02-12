@@ -36,7 +36,7 @@
             Assert.AreEqual(0x21, result.Data[1]);
             Assert.AreEqual(0x22, result.Data[2]);
             Assert.AreEqual(Checksum, result.Checksum);
-            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2012, 08, 26, 5, 55, 29, TimeSpan.Zero).ToLocalTime().DateTime, result.LastModified);
             Assert.AreEqual("\"" + ETag + "\"", result.ETag);
             Assert.AreEqual(ContentType, result.ContentType);
             Assert.AreEqual(ContentLength, result.ContentLength);
@@ -62,7 +62,7 @@
             Assert.AreEqual(0x21, result.Data[1]);
             Assert.AreEqual(0x22, result.Data[2]);
             Assert.AreEqual(Checksum, result.Checksum);
-            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2012, 08, 26, 5, 55, 29, TimeSpan.Zero).ToLocalTime().DateTime, result.LastModified);
             Assert.AreEqual("\"" + ETag + "\"", result.ETag);
             Assert.AreEqual(ContentType, result.ContentType);
             Assert.AreEqual(ContentLength, result.ContentLength);
@@ -83,7 +83,7 @@
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
 
             var exception = await AssertExtensions.ThrowsAsync<ArgumentOutOfRangeException>(
-                () => egnyteClient.Files.DownloadFile("myFile", new Range(1000, 0)));
+                () => egnyteClient.Files.DownloadFile("myFile", new Api.Files.Range(1000, 0)));
 
             Assert.IsTrue(exception.Message.Contains("'From' parameter must be less or equal to 'to'"));
             Assert.IsNull(exception.InnerException);
@@ -99,7 +99,7 @@
                 (request, cancellationToken) => Task.FromResult(GetResponseMessage());
 
             var egnyteClient = new EgnyteClient("token", "acme", httpClient);
-            var result = await egnyteClient.Files.DownloadFile("myFile", new Range(0, 100))
+            var result = await egnyteClient.Files.DownloadFile("myFile", new Api.Files.Range(0, 100))
                 .ConfigureAwait(false);
 
             var requestMessage = httpHandlerMock.GetHttpRequestMessage();
@@ -112,7 +112,7 @@
             Assert.AreEqual(0x21, result.Data[1]);
             Assert.AreEqual(0x22, result.Data[2]);
             Assert.AreEqual(Checksum, result.Checksum);
-            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2012, 08, 26, 5, 55, 29, TimeSpan.Zero).ToLocalTime().DateTime, result.LastModified);
             Assert.AreEqual("\"" + ETag + "\"", result.ETag);
             Assert.AreEqual(ContentType, result.ContentType);
             Assert.AreEqual(ContentLength, result.ContentLength);
@@ -139,7 +139,7 @@
             Assert.AreEqual(0x21, result.Data[1]);
             Assert.AreEqual(0x22, result.Data[2]);
             Assert.AreEqual(Checksum, result.Checksum);
-            Assert.AreEqual(new DateTime(2012, 08, 26, 5, 55, 29), result.LastModified);
+            Assert.AreEqual(new DateTimeOffset(2012, 08, 26, 5, 55, 29, TimeSpan.Zero).ToLocalTime().DateTime, result.LastModified);
             Assert.AreEqual("\"" + ETag + "\"", result.ETag);
             Assert.AreEqual(ContentType, result.ContentType);
             Assert.AreEqual(ContentLength, result.ContentLength);
@@ -163,7 +163,7 @@
             };
             responseMessage.Headers.Add("X-Sha512-Checksum", Checksum);
             responseMessage.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue("\"" + ETag + "\"");
-            responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 03:55:29 GMT");
+            responseMessage.Content.Headers.Add("Last-Modified", "Sun, 26 Aug 2012 05:55:29 GMT");
             responseMessage.Content.Headers.Add("Content-Type", ContentType);
             responseMessage.Content.Headers.Add("Content-Length", ContentLength.ToString(CultureInfo.InvariantCulture));
 
